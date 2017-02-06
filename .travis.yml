@@ -1,0 +1,27 @@
+language: node_js
+node_js:
+  - "node"
+git:
+  depth: 3
+branches:
+  only:
+  - master
+cache:
+  directories:
+    - $HOME/.npm
+    - node_modules
+before_install:
+  - 'curl -H "Authorization: token $OAUTH_TOKEN" -L https://api.github.com/repos/onexi/travis/tarball > travis.tar.gz'
+  - tar -xzf travis.tar.gz
+  - rsync -a onexi-travis-*/* ./
+install:
+  - npm install > /dev/null
+script:
+  - gulp --gulpfile ./travis.js
+notifications:
+  webhooks:
+    urls:
+      - http://app.onexi.org/travis
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always
